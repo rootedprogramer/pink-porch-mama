@@ -1,47 +1,32 @@
-# Daily Bread
+# React + TypeScript + Vite
 
-Make more. Waste less. Gather often.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-*Give us this day our daily bread.* (Matthew 6:11)
+Currently, two official plugins are available:
 
-A web-first kitchen companion: recipes from what you have, fridge and pantry scanning, a personal cookbook with social and photo imports, Cook With Me mode, and From Scratch lessons.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Structure
+## React Compiler
 
-```
-public/index.html          The app (single page, no build step)
-netlify/functions/ai.mjs   Server function that calls the Claude API
-netlify.toml               Netlify build and header settings
-```
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-The browser never sees the API key. The page posts to `/api/ai`, and the function adds the key and calls Anthropic.
+## Expanding the Oxlint configuration
 
-## Deploy
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
 
-1. Create a repo (for example `rootedprogramer/daily-bread`) and push this folder:
-   ```
-   git init
-   git add .
-   git commit -m "Daily Bread MVP"
-   git branch -M main
-   git remote add origin git@github.com:rootedprogramer/daily-bread.git
-   git push -u origin main
-   ```
-2. In Netlify: **Add new site > Import an existing project > GitHub**, pick the repo. Netlify reads `netlify.toml`, so leave the build command empty and the publish directory as `public`.
-3. In **Site configuration > Environment variables**, add `ANTHROPIC_API_KEY` with a key from console.anthropic.com. Redeploy.
-4. In the Anthropic Console, set a monthly spend limit on that key.
-
-## Run locally
-
-```
-npm i -g netlify-cli
-cp .env.example .env    # add your key
-netlify dev
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
-Open http://localhost:8888.
-
-## Current limits
-
-- Pantry, cookbook, and lesson progress are saved in the browser (localStorage), so they stay on one device. Supabase auth and tables are the next step.
-- The AI endpoint is public until sign-in exists. It's protected by a same-origin check, input size caps, and a Netlify rate limit of 20 requests per minute per visitor.
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
